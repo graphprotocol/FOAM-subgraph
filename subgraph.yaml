@@ -1,0 +1,95 @@
+# FoamTokenController.sol -  0x5b9691Fc4b0EE89546B15a13a6E7EEa38700ba1d
+# Parameterizer.sol -  0xBAbA8FBE1169FBa058CA253236522a0d1F1737e9
+# Token.sol -  0x4946Fcea7C692606e8908002e55A582af44AC121
+
+specVersion: 0.0.1
+description: The FOAM Proof of Location protocol empowers a permissionless and autonomous network of radio beacons that can offer secure location services.
+repository: https://github.com/graphprotocol/FOAM-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: SignalToken
+    network: mainnet
+    source:
+      address: "0x36f16a0d35B866CdD0f3C3FA39e2Ba8F48b099d2"
+      abi: SignalToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - # Todo
+      abis:
+        - name: SignalToken
+          file: ./abis/signalToken.json
+      eventHandlers:
+        - event: # Todo(address,address)
+          handler: #handleTodo
+      file: ./src/mappings/signalToken.ts
+  - kind: ethereum/contract
+    name: PLCRVoting
+    network: mainnet
+    source:
+      address: "0x66f27365D66C0E8aD4ef87Db8cB4af63ce874b7b"
+      abi: PLCRVoting
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - # Todo
+      abis:
+        - name: PLCRVoting
+          file: ./abis/PLCRVoting.json
+      eventHandlers:
+        - event: # Todo(address,address)
+          handler: #handleTodo
+      file: ./src/mappings/PLCRVoting.ts
+  - kind: ethereum/contract
+    name: Registry
+    network: mainnet
+    source:
+      address: "0x2832373DDDad96Bbfb44f1B7dA11B6541026BF40"
+      abi: Registry
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.1
+      language: wasm/assemblyscript
+      entities:
+        - # Todo
+      abis:
+        - name: Registry
+          file: ./abis/registry.json
+      eventHandlers:
+        - event: # Todo(address,address)
+          handler: #handleTodo
+      file: ./src/mappings/registry.ts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
