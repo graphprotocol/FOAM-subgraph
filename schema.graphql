@@ -1,0 +1,35 @@
+# Parameterizer.sol
+type ParamProposal @entity  {
+    id: ID!
+}
+
+type Challenge @entity {
+    id: ID!
+}
+
+# PLCRVoting.sol
+type Poll @entity {
+    id: ID!
+}
+
+# Registry.sol
+type Listing @entity {
+    id: ID!
+    owner: Bytes!
+}
+
+# is this a duplicate entity? or do two types of challenges exist?
+type Challenge @entity {
+    id: ID!
+    owner: Bytes!
+}
+
+# All solidity, including Token.sol
+# User is both a cartographer, and a challenger, or just a token holder doing nothing
+type User @entity {
+    id: ID!                                                             # eth address
+    tokenBalanceFOAM: BigInt!
+    tokenBalanceSignalTokens: BigInt!                                   # ERC-721
+    listings: [Listings!]               @derivedFrom(field: "owner")
+    challenges: [Challenge!]            @derivedFrom(field: "owner")
+}
