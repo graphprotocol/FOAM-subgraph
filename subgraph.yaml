@@ -1,6 +1,5 @@
-# FoamTokenController.sol -  0x5b9691Fc4b0EE89546B15a13a6E7EEa38700ba1d
-# Parameterizer.sol -  0xBAbA8FBE1169FBa058CA253236522a0d1F1737e9
-# Token.sol -  0x4946Fcea7C692606e8908002e55A582af44AC121
+# FoamTokenController.sol -  0x5b9691Fc4b0EE89546B15a13a6E7EEa38700ba1d - NOT CORE TO PROTOCOL - IGNORE
+# Parameterizer.sol -  0xBAbA8FBE1169FBa058CA253236522a0d1F1737e9 - NO EVENTS EVER EMITTED, NOT SURE WHY, TO INVESTIGATE
 
 specVersion: 0.0.1
 description: The FOAM Proof of Location protocol empowers a permissionless and autonomous network of radio beacons that can offer secure location services.
@@ -65,6 +64,25 @@ dataSources:
         - event: # Todo(address,address)
           handler: #handleTodo
       file: ./src/mappings/registry.ts
+#  - kind: ethereum/contract
+#    name: FOAMToken
+#    network: mainnet
+#    source:
+#      address: "0x4946Fcea7C692606e8908002e55A582af44AC121"
+#      abi: FOAMToken
+#    mapping:
+#      kind: ethereum/events
+#      apiVersion: 0.0.1
+#      language: wasm/assemblyscript
+#      entities:
+#        - User
+#      abis:
+#        - name: FOAMToken
+#          file: ./abis/token.json
+#      eventHandlers:
+#        - event: Transfer(address,address,uint256)
+#          handler: handleTransfer
+#      file: ./src/mappings/FOAMToken.ts
 
 
 

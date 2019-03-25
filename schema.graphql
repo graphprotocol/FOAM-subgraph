@@ -8,6 +8,7 @@ type Challenge @entity {
 }
 
 # PLCRVoting.sol
+# each poll is an instance of a vote on a singal (ERC721 token in the TCR)
 type Poll @entity {
     id: ID!
 }
