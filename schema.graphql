@@ -1,11 +1,33 @@
-# Parameterizer.sol
-type ParamProposal @entity  {
-    id: ID!
-}
-
-type Challenge @entity {
-    id: ID!
-}
+## Parameterizer.sol
+#type ParamProposal @entity  {
+#    id: ID!
+#
+#    # pollIDs are mapped to these
+##    struct ParamProposal {
+#    #    uint appExpiry;
+#    #    uint challengeID;
+#    #    uint deposit;
+#    #    string name;
+#    #    address owner;
+#    #    uint processBy;
+#    #    uint value;
+##}
+#}
+#
+#type Challenge @entity {
+#    id: ID!
+#
+##    challengeIDs are mapped to these
+#
+##    struct Challenge {
+##        uint rewardPool;        // (remaining) pool of tokens distributed amongst winning voters
+##        address challenger;     // owner of Challenge
+##        bool resolved;          // indication of if challenge is resolved
+##        uint stake;             // number of tokens at risk for either party during challenge
+##        uint winningTokens;     // (remaining) amount of tokens used for voting by the winning side
+##        mapping(address => bool) tokenClaims;
+##    }
+#}
 
 # PLCRVoting.sol
 # each poll is an instance of a vote on a singal (ERC721 token in the TCR)
@@ -17,12 +39,18 @@ type Poll @entity {
 type Listing @entity {
     id: ID!
     owner: Bytes!
+    whitelist: Boolean!
+
+    # prob has a poll and challenge within it
 }
 
 # is this a duplicate entity? or do two types of challenges exist?
 type Challenge @entity {
     id: ID!
     owner: Bytes!
+#    winner: Enum! # challeger or defender ???
+    challengers: [Bytes!] # anyone who joined in on the challenge
+    defenders: [Bytes!] # original propser and whoever else joins them (is this possible?, to join?)
 }
 
 # All solidity, including Token.sol
@@ -31,6 +59,9 @@ type User @entity {
     id: ID!                                                             # eth address
     tokenBalanceFOAM: BigInt!
     tokenBalanceSignalTokens: BigInt!                                   # ERC-721
-    listings: [Listings!]               @derivedFrom(field: "owner")
+    listings: [Listing!]               @derivedFrom(field: "owner")
     challenges: [Challenge!]            @derivedFrom(field: "owner")
+
+    numApplications: BigInt!    # also stored as mapping public var
+    totalStaked: BigInt!        # also stored as mapping public var
 }
