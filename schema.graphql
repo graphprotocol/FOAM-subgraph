@@ -40,6 +40,10 @@ type Listing @entity {
     id: ID!
     owner: Bytes!
     whitelist: Boolean!
+    expiry: BigInt!
+    unstakedDeposit: BigInt!
+    data: String!
+
 
     # prob has a poll and challenge within it
 }
@@ -57,11 +61,10 @@ type Challenge @entity {
 # User is both a cartographer, and a challenger, or just a token holder doing nothing
 type User @entity {
     id: ID!                                                             # eth address
-    tokenBalanceFOAM: BigInt!
-    tokenBalanceSignalTokens: BigInt!                                   # ERC-721
-    listings: [Listing!]               @derivedFrom(field: "owner")
-    challenges: [Challenge!]            @derivedFrom(field: "owner")
-
+    foamBalance: BigInt!
+    signalBalance: BigInt!                                   # ERC-721
     numApplications: BigInt!    # also stored as mapping public var
     totalStaked: BigInt!        # also stored as mapping public var
+    listings: [Listing!]!               @derivedFrom(field: "owner")
+    challenges: [Challenge!]!            @derivedFrom(field: "owner")
 }

@@ -1,14 +1,4 @@
-// right now there are no events for this emitted by mainnet
-
-// import {
-//   Transfer
-// } from '../types/signalToken/signalToken'
-//
-// export function handleTransfer(event: Transfer): void {
-// }
-
-
-import {BigInt} from '@graphprotocol/graph-ts'
+import {BigInt,Address} from '@graphprotocol/graph-ts'
 import {User, Listing, Challenge} from '../types/schema'
 import {
   _Application,
@@ -23,20 +13,38 @@ import {
   _ChallengeFailed,
   _ChallengeSucceeded,
   _RewardClaimed,
-  _ListingMigrated
+  _ListingMigrated,
+  Registry
 } from '../types/Registry/Registry'
 
-
 export function handleApplication(event: _Application): void{
-  // let id = event.params.who.toHex()
-  // let inviter = Invite.load(id)
-  // if (inviter == null){
-  //   inviter = new Invite(id)
-  //   inviter.inviteBalance = BigInt.fromI32(0)
-  //   inviter.invites = []
-  // }
-  // inviter.inviteBalance = event.params.amount
-  // inviter.save()
+  let id = event.params.listingHash.toHex()
+  let listing = new Listing(id)
+  listing.expiry = event.params.appEndDate
+  listing.unstakedDeposit = event.params.deposit
+  listing.data = event.params.data
+  listing.whitelist = false
+
+  let registry = Registry.bind(event.address)
+  let storageListing = registry.listings(event.params.listingHash)
+  listing.owner = storageListing.value2
+  listing.save()
+
+  let userID = listing.owner.toHex()
+  let user = User.load(userID)
+  if (user == null){
+    user = new User(userID)
+    user.foamBalance = BigInt.fromI32(0)
+    user.signalBalance = BigInt.fromI32(0)
+    user.numApplications = BigInt.fromI32(0)
+    user.totalStaked = BigInt.fromI32(0)
+    user.listings = []
+    user.challenges = []
+  }
+
+  user.numApplications = registry.numApplications(Address.fromString(userID))
+  user.totalStaked = registry.totalStaked(Address.fromString(userID))
+  user.save()
 }
 
 export function handleChallenge(event: _Challenge): void{
