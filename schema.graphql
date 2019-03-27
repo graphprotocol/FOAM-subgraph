@@ -50,11 +50,16 @@ type Listing @entity {
 
 # is this a duplicate entity? or do two types of challenges exist?
 type Challenge @entity {
-    id: ID!
-    owner: Bytes!
-#    winner: Enum! # challeger or defender ???
-    challengers: [Bytes!] # anyone who joined in on the challenge
-    defenders: [Bytes!] # original propser and whoever else joins them (is this possible?, to join?)
+    id: ID!                             # The challenge ID
+    rewardPool: BigInt!                 # (remaining) Pool of tokens to be distributed to winning voters
+    challenger: Bytes!                  # Owner of the challenge
+    resolved: Boolean!                  # Indicates if the challenge is resolved (success or fail)
+    stake: BigInt!                      # Number of tokens at stake for either party during challenge
+    totalTokens: BigInt!                # (remaining number of tokens used in voting by the winning side
+    voterClaimed: [Bytes!]!             # If an address is in this array, it has claimed its reward
+    # successful: Boolean!
+
+    #    defenders: [Bytes!] # original propser and whoever else joins them (is this possible?, to join?)
 }
 
 # All solidity, including Token.sol

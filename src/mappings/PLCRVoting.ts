@@ -1,13 +1,51 @@
-/*
-  it seems like this just just votes for tokens
-  and that the events emitted by it help
-  they never delete data
-  probably the registry calls into here, checks isPassed
+import {BigInt,Address} from '@graphprotocol/graph-ts'
+import {User, Poll} from '../types/schema'
+import {
+  _VoteCommitted,
+  _VoteRevealed,
+  _PollCreated,
+  _VotingRightsGranted,
+  _VotingRightsWithdrawn,
+  _TokensRescued
+} from '../types/PLCRVoting/PLCRVoting'
 
-  we would wanna check is passed
 
-  it is debateable whether or not we need POLLs , the registry might cover it
-  this might be all extra info
+export function handleVoteCommitted(event: _VoteCommitted): void{
 
-  that i can decide if i want to add
- */
+
+
+}
+
+
+export function handleVoteRevealed(event: _VoteRevealed): void{
+
+
+
+}
+
+export function handlePollCreated(event: _PollCreated): void{
+
+
+
+}
+
+
+export function handleVotingRightsGranted(event: _VotingRightsGranted): void{
+
+
+
+}
+
+
+export function handleVotingRightsWithdrawn(event: _VotingRightsWithdrawn): void{
+
+
+
+}
+
+
+export function handleTokensRescued(event: _TokensRescued): void{
+
+
+
+}

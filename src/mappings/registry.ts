@@ -49,6 +49,11 @@ export function handleApplication(event: _Application): void{
 
 export function handleChallenge(event: _Challenge): void{
 
+  // listing hash gets its challengeID field updated (event contains)
+  // listing hash gets its unstaked deposit updated
+
+  // chalennge gets created (event contains, plus call into
+
 }
 
 export function handleDeposit(event: _Deposit): void{
@@ -87,7 +92,7 @@ export function handleChallengeSucceeded(event: _ChallengeSucceeded): void{
 
 }
 
-export function handleRwardClaimed(event: _RewardClaimed): void{
+export function handleRewardClaimed(event: _RewardClaimed): void{
 
 }
 
