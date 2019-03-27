@@ -54,6 +54,8 @@ dataSources:
       abis:
         - name: Registry
           file: ./abis/registry.json
+        - name: PLCRVoting
+          file: ./abis/PLCRVoting.json
       eventHandlers:
         - event: _Application(bytes32,uint256,uint256,string)
           handler: handleApplication

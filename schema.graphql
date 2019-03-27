@@ -60,7 +60,7 @@ type Challenge @entity {
     totalTokens: BigInt!                # (remaining number of tokens used in voting by the winning side
     votersClaimed: [Bytes!]!            # If an address is in this array, it has claimed its reward
     data: String!                       # extra data (think ipfs hashes)
-    # successful: Boolean!
+    passed: Boolean                     # whether or not it passed. null if not decided yet
 
     #    defenders: [Bytes!] # original propser and whoever else joins them (is this possible?, to join?)
 }

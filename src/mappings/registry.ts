@@ -14,8 +14,10 @@ import {
   _ChallengeSucceeded,
   _RewardClaimed,
   _ListingMigrated,
-  Registry
+  Registry,
 } from '../types/Registry/Registry'
+
+import {PLCRVoting} from '../types/Registry/PLCRVoting'
 
 export function handleApplication(event: _Application): void {
   let id = event.params.listingHash.toHex()
@@ -103,7 +105,10 @@ export function handleWithdrawal(event: _Withdrawal): void {
 }
 
 export function handleApplicationWhitelisted(event: _ApplicationWhitelisted): void {
-
+  let id = event.params.listingHash.toHex()
+  let listing = Listing.load(id)
+  listing.whitelist = true
+  listing.save()
 }
 
 export function handleApplicationRemoved(event: _ApplicationRemoved): void {
@@ -121,7 +126,11 @@ export function handleListingRemoved(event: _ListingRemoved): void {
 }
 
 export function handleListingWithdrawn(event: _ListingWithdrawn): void {
-
+  /* No work needs to be done here. This event always runs after
+   * _ListingRemoved or _ApplicationRemoved, which will delete the listing
+   * The extra data provided by ListingWithdrawn isn't that valuable
+   * So it is ignored for now.
+   */
 }
 
 export function handleTouchAndRemoved(event: _TouchAndRemoved): void {
@@ -133,7 +142,23 @@ export function handleTouchAndRemoved(event: _TouchAndRemoved): void {
 }
 
 export function handleChallengeFailed(event: _ChallengeFailed): void {
+  let id = event.params.challengeID.toHex()
+  let challenge = Challenge.load(id)
+  challenge.resolved = true
+  challenge.totalTokens = event.params.totalTokens
+  challenge.rewardPool = event.params.rewardPool
+  challenge.passed = false
+  challenge.save()
 
+  let listing = Listing.load(event.params.listingHash.toHex())
+  let registry = Registry.bind(event.address)
+  let storageListing = registry.listings(event.params.listingHash)
+  listing.unstakedDeposit = storageListing.value3
+  listing.save()
+
+  let user = User.load(listing.owner.toHex())
+  user.totalStaked = registry.totalStaked(listing.owner)
+  user.save()
 }
 
 export function handleChallengeSucceeded(event: _ChallengeSucceeded): void {
@@ -145,5 +170,5 @@ export function handleRewardClaimed(event: _RewardClaimed): void {
 }
 
 export function handleListingMigrated(event: _ListingMigrated): void {
-
+  // Never emitted on mainnet, ignored for now
 }
