@@ -20,7 +20,7 @@ import {
 export function handleApplication(event: _Application): void{
   let id = event.params.listingHash.toHex()
   let listing = new Listing(id)
-  listing.expiry = event.params.appEndDate
+  listing.applicationExpiry = event.params.appEndDate
   listing.unstakedDeposit = event.params.deposit
   listing.data = event.params.data
   listing.whitelist = false
@@ -48,12 +48,38 @@ export function handleApplication(event: _Application): void{
 }
 
 export function handleChallenge(event: _Challenge): void{
-
-  // listing hash gets its challengeID field updated (event contains)
-  // listing hash gets its unstaked deposit updated
+  let listing = Listing.load(event.params.listingHash.toHex())
+  listing.challengeID = event.params.challengeID
+  listing.unstakedDeposit = listing.unstakedDeposit.minus(event.params.deposit)
+  listing.save()
 
   // chalennge gets created (event contains, plus call into
+  let challenge = new Challenge(event.params.challengeID.toHex())
+  let registry = Registry.bind(event.address)
+  let storageChallenge = registry.challenges(event.params.challengeID)
+  challenge.rewardPool = storageChallenge.value0
+  challenge.challenger = storageChallenge.value1
+  challenge.resolved = storageChallenge.value2
+  challenge.stake = storageChallenge.value3
+  challenge.totalTokens = storageChallenge.value4
+  challenge.votersClaimed = []
+  challenge.data = event.params.data
+  challenge.save()
 
+  let userID = challenge.challenger.toHex()
+  let user = User.load(userID)
+  if (user == null){
+    user = new User(userID)
+    user.foamBalance = BigInt.fromI32(0)
+    user.signalBalance = BigInt.fromI32(0)
+    user.numApplications = BigInt.fromI32(0)
+    user.totalStaked = BigInt.fromI32(0)
+    user.listings = []
+    user.challenges = []
+    user.save()
+    // note - user doesn't stake or apply here, those have to do with listing. so it is okay
+    // the user is populated with 0 for everything
+  }
 }
 
 export function handleDeposit(event: _Deposit): void{
