@@ -162,11 +162,31 @@ export function handleChallengeFailed(event: _ChallengeFailed): void {
 }
 
 export function handleChallengeSucceeded(event: _ChallengeSucceeded): void {
-
+  let id = event.params.challengeID.toHex()
+  let challenge = Challenge.load(id)
+  challenge.resolved = true
+  challenge.totalTokens = event.params.totalTokens
+  challenge.rewardPool = event.params.rewardPool
+  challenge.passed = true
+  challenge.save()
 }
 
+// note - reward amounts owned by each user is stored in PLCR voting. only totals stored in Registry
 export function handleRewardClaimed(event: _RewardClaimed): void {
+  let id = event.params.challengeID.toHex()
+  let challenge = Challenge.load(id)
 
+  let registry = Registry.bind(event.address)
+  let challengeStorage = registry.challenges(event.params.challengeID)
+  challenge.totalTokens = challengeStorage.value4
+  challenge.rewardPool = challengeStorage.value0
+
+  let votersClaimed = challenge.votersClaimed
+  votersClaimed.push(event.params.voter)
+  challenge.votersClaimed = votersClaimed
+  challenge.votersClaimed
+
+  challenge.save()
 }
 
 export function handleListingMigrated(event: _ListingMigrated): void {
