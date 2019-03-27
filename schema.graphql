@@ -44,6 +44,7 @@ type Listing @entity {
     unstakedDeposit: BigInt!
     data: String!                       # extra data (think ipfs hashes)
     challengeID: BigInt
+    deleted: Boolean!                   # when true, listing has been deleted from the smart contract
 
 
     # prob has a poll and challenge within it
@@ -70,8 +71,8 @@ type User @entity {
     id: ID!                                                             # eth address
     foamBalance: BigInt!
     signalBalance: BigInt!                                   # ERC-721
-    numApplications: BigInt!    # also stored as mapping public var
-    totalStaked: BigInt!        # also stored as mapping public var
+    numApplications: BigInt!    # also stored as mapping public var. Smart contract only counts increases
+    totalStaked: BigInt!        # also stored as mapping public var. Smart contract only counts increases
     listings: [Listing!]!               @derivedFrom(field: "owner")
     challenges: [Challenge!]!            @derivedFrom(field: "challenger")
 }

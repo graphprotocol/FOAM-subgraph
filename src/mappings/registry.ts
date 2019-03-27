@@ -17,13 +17,14 @@ import {
   Registry
 } from '../types/Registry/Registry'
 
-export function handleApplication(event: _Application): void{
+export function handleApplication(event: _Application): void {
   let id = event.params.listingHash.toHex()
   let listing = new Listing(id)
   listing.applicationExpiry = event.params.appEndDate
   listing.unstakedDeposit = event.params.deposit
   listing.data = event.params.data
   listing.whitelist = false
+  listing.deleted = false
 
   let registry = Registry.bind(event.address)
   let storageListing = registry.listings(event.params.listingHash)
@@ -47,7 +48,7 @@ export function handleApplication(event: _Application): void{
   user.save()
 }
 
-export function handleChallenge(event: _Challenge): void{
+export function handleChallenge(event: _Challenge): void {
   let listing = Listing.load(event.params.listingHash.toHex())
   listing.challengeID = event.params.challengeID
   listing.unstakedDeposit = listing.unstakedDeposit.minus(event.params.deposit)
@@ -82,46 +83,67 @@ export function handleChallenge(event: _Challenge): void{
   }
 }
 
-export function handleDeposit(event: _Deposit): void{
+export function handleDeposit(event: _Deposit): void {
+  let id = event.params.listingHash.toHex()
+  let listing = Listing.load(id)
+  listing.unstakedDeposit = event.params.newTotal
+  listing.save()
+
+  let userID = listing.owner.toHex()
+  let user = User.load(userID)
+  user.totalStaked = user.totalStaked.plus(event.params.added)
+  user.save()
+}
+
+export function handleWithdrawal(event: _Withdrawal): void {
+  let id = event.params.listingHash.toHex()
+  let listing = Listing.load(id)
+  listing.unstakedDeposit = event.params.newTotal
+  listing.save()
+}
+
+export function handleApplicationWhitelisted(event: _ApplicationWhitelisted): void {
 
 }
 
-export function handleWithdrawal(event: _Withdrawal): void{
+export function handleApplicationRemoved(event: _ApplicationRemoved): void {
+  let id = event.params.listingHash.toHex()
+  let listing = Listing.load(id)
+  listing.deleted = true
+  listing.save()
+}
+
+export function handleListingRemoved(event: _ListingRemoved): void {
+  let id = event.params.listingHash.toHex()
+  let listing = Listing.load(id)
+  listing.deleted = true
+  listing.save()
+}
+
+export function handleListingWithdrawn(event: _ListingWithdrawn): void {
 
 }
 
-export function handleApplicationWhitelisted(event: _ApplicationWhitelisted): void{
+export function handleTouchAndRemoved(event: _TouchAndRemoved): void {
+  /* No work needs to be done here. This event always runs after
+   * _ListingRemoved or _ApplicationRemoved, which will delete the listing
+   * The extra data provided by touchAndRemove isn't that valuable
+   * So it is ignored for now.
+   */
+}
+
+export function handleChallengeFailed(event: _ChallengeFailed): void {
 
 }
 
-export function handleApplicationRemoved(event: _ApplicationRemoved): void{
+export function handleChallengeSucceeded(event: _ChallengeSucceeded): void {
 
 }
 
-export function handleListingRemoved(event: _ListingRemoved): void{
+export function handleRewardClaimed(event: _RewardClaimed): void {
 
 }
 
-export function handleListingWithdrawn(event: _ListingWithdrawn): void{
-
-}
-
-export function handleTouchAndRemoved(event: _TouchAndRemoved): void{
-
-}
-
-export function handleChallengeFailed(event: _ChallengeFailed): void{
-
-}
-
-export function handleChallengeSucceeded(event: _ChallengeSucceeded): void{
-
-}
-
-export function handleRewardClaimed(event: _RewardClaimed): void{
-
-}
-
-export function handleListingMigrated(event: _ListingMigrated): void{
+export function handleListingMigrated(event: _ListingMigrated): void {
 
 }
