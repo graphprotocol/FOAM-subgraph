@@ -9,9 +9,10 @@ type Poll @entity {
     votesFor: BigInt!
     votesAgainst: BigInt!
     didCommit: [Bytes!]!                            # if an address is in here, they did commit a vote
-    didReveal: [Bytes!]!                           # if an address is in here, they did reveal their vote
+    didReveal: [Bytes!]!                            # if an address is in here, they did reveal their vote
     votes: [Vote!]! @derivedFrom(field: "pollID")
     totalTokens: BigInt!
+    challenge: Challenge!                           # 1to1 relationship with the challenge, they share IDs
 
     # TODO - add dllMap?
 }
@@ -34,14 +35,14 @@ type Listing @entity {
     data: String!                       # extra data (think ipfs hashes)
     challengeID: BigInt
     deleted: Boolean!                   # when true, listing has been deleted from the smart contract
-
+    challenges: [Challenge!]! @derivedFrom(field:"listing") # array of all challenges. Active is challenge.resolved = false
 
     # TODO - relate challenges, prob an array , related to the listingID
 }
 
 # is this a duplicate entity? or do two types of challenges exist?
 type Challenge @entity {
-    id: ID!                             # The challenge ID
+    id: ID!                             # The challenge ID (same as poll ID)
     rewardPool: BigInt!                 # (remaining) Pool of tokens to be distributed to winning voters
     challenger: Bytes!                  # Owner of the challenge
     resolved: Boolean!                  # Indicates if the challenge is resolved (success or fail)
@@ -50,8 +51,8 @@ type Challenge @entity {
     votersClaimed: [Bytes!]!            # If an address is in this array, it has claimed its reward
     data: String!                       # extra data (think ipfs hashes)
     passed: Boolean                     # whether or not it passed. null if not decided yet
-
-    # TODO - relate the poll that is used in this challenge
+    poll: Poll!                         # 1 to 1 relationship with the poll, they share IDs
+    listing: Listing!
 }
 
 # All solidity, including Token.sol

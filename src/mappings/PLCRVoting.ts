@@ -17,6 +17,7 @@ export function handleVoteCommitted(event: _VoteCommitted): void{
   commits.push(event.params.voter)
   poll.didCommit = commits
   poll.totalTokens = poll.totalTokens.plus(event.params.numTokens)
+  poll.challenge = pollID
   poll.save()
 
   let voteID = event.params.pollID.toString().concat('-').concat(event.params.voter.toHex())

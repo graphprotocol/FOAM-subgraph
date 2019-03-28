@@ -25,6 +25,7 @@ export function handleApplication(event: _Application): void {
   listing.data = event.params.data
   listing.whitelist = false
   listing.deleted = false
+  listing.challenges = []
 
   let registry = Registry.bind(event.address)
   let storageListing = registry.listings(event.params.listingHash)
@@ -59,7 +60,8 @@ export function handleChallenge(event: _Challenge): void {
   listing.save()
 
   // chalennge gets created (event contains, plus call into
-  let challenge = new Challenge(event.params.challengeID.toHex())
+  let challengeID = event.params.challengeID.toHex()
+  let challenge = new Challenge(challengeID)
   let registry = Registry.bind(event.address)
   let storageChallenge = registry.challenges(event.params.challengeID)
   challenge.rewardPool = storageChallenge.value0
@@ -69,6 +71,8 @@ export function handleChallenge(event: _Challenge): void {
   challenge.totalTokens = storageChallenge.value4
   challenge.votersClaimed = []
   challenge.data = event.params.data
+  challenge.poll = challengeID
+  challenge.listing = event.params.listingHash.toHex()
   challenge.save()
 
   let userID = challenge.challenger.toHex()
@@ -76,13 +80,13 @@ export function handleChallenge(event: _Challenge): void {
   if (user == null){
     user = new User(userID)
     user.foamBalance = BigInt.fromI32(0)
-    user.signalBalance = BigInt.fromI32(0)
     user.numApplications = BigInt.fromI32(0)
     user.totalStaked = BigInt.fromI32(0)
     user.listings = []
     user.challenges = []
     user.votes = []
     user.createdPolls = []
+    user.signals = []
     user.totalVotes = BigInt.fromI32(0)
     user.lockedVotes = BigInt.fromI32(0)
     user.save()
