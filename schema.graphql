@@ -1,34 +1,3 @@
-## Parameterizer.sol
-#type ParamProposal @entity  {
-#    id: ID!
-#
-#    # pollIDs are mapped to these
-##    struct ParamProposal {
-#    #    uint appExpiry;
-#    #    uint challengeID;
-#    #    uint deposit;
-#    #    string name;
-#    #    address owner;
-#    #    uint processBy;
-#    #    uint value;
-##}
-#}
-#
-#type Challenge @entity {
-#    id: ID!
-#
-##    challengeIDs are mapped to these
-#
-##    struct Challenge {
-##        uint rewardPool;        // (remaining) pool of tokens distributed amongst winning voters
-##        address challenger;     // owner of Challenge
-##        bool resolved;          // indication of if challenge is resolved
-##        uint stake;             // number of tokens at risk for either party during challenge
-##        uint winningTokens;     // (remaining) amount of tokens used for voting by the winning side
-##        mapping(address => bool) tokenClaims;
-##    }
-#}
-
 # PLCRVoting.sol
 # each poll is an instance of a vote on a singal (ERC721 token in the TCR)
 type Poll @entity {
@@ -44,7 +13,7 @@ type Poll @entity {
     votes: [Vote!]! @derivedFrom(field: "pollID")
     totalTokens: BigInt!
 
-    # add dllMap?
+    # TODO - add dllMap?
 }
 
 type Vote @entity {
@@ -82,23 +51,39 @@ type Challenge @entity {
     data: String!                       # extra data (think ipfs hashes)
     passed: Boolean                     # whether or not it passed. null if not decided yet
 
-    # TODO - relate the poll that is used in this challenge 
+    # TODO - relate the poll that is used in this challenge
 }
 
 # All solidity, including Token.sol
 # User is both a cartographer, and a challenger, or just a token holder doing nothing
 type User @entity {
     id: ID!                                                             # eth address
-    foamBalance: BigInt!
-    signalBalance: BigInt!                                   # ERC-721
+
+    # Registry.sol
     numApplications: BigInt!    # also stored as mapping public var. Smart contract only counts increases
     totalStaked: BigInt!        # also stored as mapping public var. Smart contract only counts increases
     listings: [Listing!]! @derivedFrom(field: "owner")
     challenges: [Challenge!]! @derivedFrom(field: "challenger")
 
-    # FROM PLCRVoting
+    # FROM PLCRVoting.sol
     createdPolls: [Poll!]! @derivedFrom(field: "creator")
     votes: [Vote!]! @derivedFrom(field: "user")
     totalVotes: BigInt!   # how many tokens they've allocated to PLCR contract
     lockedVotes: BigInt!
+
+    # Token.sol (FOAM Token)
+    foamBalance: BigInt!
+
+    # SignalToken.sol
+    signals: [Signal!]! @derivedFrom(field:"owner")                     # ERC-721
+}
+
+# TODO - how are these related to voting, and listings?
+type Signal @entity {
+    id: ID!             # signal token ID
+    owner: Bytes!
+    cst: Bytes
+    nftAddress: Bytes
+    geohash: Bytes
+    radius: BigInt
 }

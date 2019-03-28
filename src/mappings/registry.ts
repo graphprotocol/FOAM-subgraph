@@ -17,8 +17,6 @@ import {
   Registry,
 } from '../types/Registry/Registry'
 
-import {PLCRVoting} from '../types/Registry/PLCRVoting'
-
 export function handleApplication(event: _Application): void {
   let id = event.params.listingHash.toHex()
   let listing = new Listing(id)
@@ -38,13 +36,13 @@ export function handleApplication(event: _Application): void {
   if (user == null){
     user = new User(userID)
     user.foamBalance = BigInt.fromI32(0)
-    user.signalBalance = BigInt.fromI32(0)
     user.numApplications = BigInt.fromI32(0)
     user.totalStaked = BigInt.fromI32(0)
     user.listings = []
     user.challenges = []
     user.votes = []
     user.createdPolls = []
+    user.signals = []
     user.totalVotes = BigInt.fromI32(0)
     user.lockedVotes = BigInt.fromI32(0)
   }
