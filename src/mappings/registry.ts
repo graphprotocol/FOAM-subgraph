@@ -43,6 +43,10 @@ export function handleApplication(event: _Application): void {
     user.totalStaked = BigInt.fromI32(0)
     user.listings = []
     user.challenges = []
+    user.votes = []
+    user.createdPolls = []
+    user.totalVotes = BigInt.fromI32(0)
+    user.lockedVotes = BigInt.fromI32(0)
   }
 
   user.numApplications = registry.numApplications(Address.fromString(userID))
@@ -79,6 +83,10 @@ export function handleChallenge(event: _Challenge): void {
     user.totalStaked = BigInt.fromI32(0)
     user.listings = []
     user.challenges = []
+    user.votes = []
+    user.createdPolls = []
+    user.totalVotes = BigInt.fromI32(0)
+    user.lockedVotes = BigInt.fromI32(0)
     user.save()
     // note - user doesn't stake or apply here, those have to do with listing. so it is okay
     // the user is populated with 0 for everything
@@ -157,7 +165,7 @@ export function handleChallengeFailed(event: _ChallengeFailed): void {
   listing.save()
 
   let user = User.load(listing.owner.toHex())
-  user.totalStaked = registry.totalStaked(listing.owner)
+  user.totalStaked = registry.totalStaked(Address.fromString(listing.owner.toHex()))
   user.save()
 }
 

@@ -33,6 +33,26 @@
 # each poll is an instance of a vote on a singal (ERC721 token in the TCR)
 type Poll @entity {
     id: ID!
+    creator: Bytes!
+    commitEndDate: BigInt!
+    revealEndDate: BigInt!
+    voteQuorum: BigInt!
+    votesFor: BigInt!
+    votesAgainst: BigInt!
+    didCommit: [Bytes!]!                            # if an address is in here, they did commit a vote
+    didReveal: [Bytes!]!                           # if an address is in here, they did reveal their vote
+    votes: [Vote!]! @derivedFrom(field: "pollID")
+    totalTokens: BigInt!
+
+    # add dllMap?
+}
+
+type Vote @entity {
+    id: ID!                             # concatenation of POLLID-ETHADDRESS
+    pollID: BigInt!                     # for relational connections
+    user: Bytes!                        # for relational connections
+    numTokens: BigInt!
+    votedFor: Boolean                   # true means voted for, false agaisnt, null unknown
 }
 
 # Registry.sol
@@ -47,7 +67,7 @@ type Listing @entity {
     deleted: Boolean!                   # when true, listing has been deleted from the smart contract
 
 
-    # prob has a poll and challenge within it
+    # TODO - relate challenges, prob an array , related to the listingID
 }
 
 # is this a duplicate entity? or do two types of challenges exist?
@@ -62,7 +82,7 @@ type Challenge @entity {
     data: String!                       # extra data (think ipfs hashes)
     passed: Boolean                     # whether or not it passed. null if not decided yet
 
-    #    defenders: [Bytes!] # original propser and whoever else joins them (is this possible?, to join?)
+    # TODO - relate the poll that is used in this challenge 
 }
 
 # All solidity, including Token.sol
@@ -73,6 +93,12 @@ type User @entity {
     signalBalance: BigInt!                                   # ERC-721
     numApplications: BigInt!    # also stored as mapping public var. Smart contract only counts increases
     totalStaked: BigInt!        # also stored as mapping public var. Smart contract only counts increases
-    listings: [Listing!]!               @derivedFrom(field: "owner")
-    challenges: [Challenge!]!            @derivedFrom(field: "challenger")
+    listings: [Listing!]! @derivedFrom(field: "owner")
+    challenges: [Challenge!]! @derivedFrom(field: "challenger")
+
+    # FROM PLCRVoting
+    createdPolls: [Poll!]! @derivedFrom(field: "creator")
+    votes: [Vote!]! @derivedFrom(field: "user")
+    totalVotes: BigInt!   # how many tokens they've allocated to PLCR contract
+    lockedVotes: BigInt!
 }
