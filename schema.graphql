@@ -10,9 +10,9 @@ type Poll @entity {
     votesAgainst: BigInt!
     didCommit: [Bytes!]!                            # if an address is in here, they did commit a vote
     didReveal: [Bytes!]!                            # if an address is in here, they did reveal their vote
-    votes: [Vote!]! @derivedFrom(field: "pollID")
     totalTokens: BigInt!
-    challenge: Challenge!                           # 1to1 relationship with the challenge, they share IDs
+    challenge: Challenge                           # 1to1 relationship with the challenge, they share IDs
+    votes: [Vote!]! @derivedFrom(field: "pollID")
 }
 
 # Votes represent the DLL and the attribute store.
@@ -39,8 +39,6 @@ type Listing @entity {
     challengeID: BigInt
     deleted: Boolean!                   # when true, listing has been deleted from the smart contract
     challenges: [Challenge!]! @derivedFrom(field:"listing") # array of all challenges. Active is challenge.resolved = false
-
-    # TODO - ensure all entity relationships are working
 }
 
 # is this a duplicate entity? or do two types of challenges exist?
@@ -70,7 +68,7 @@ type User @entity {
     challenges: [Challenge!]! @derivedFrom(field: "challenger")
 
     # FROM PLCRVoting.sol
-    createdPolls: [Poll!]! @derivedFrom(field: "creator")
+    createdPolls: [Poll!]! @derivedFrom(field: "creator")       # note - right now all polls are created by Registry.sol
     votes: [Vote!]! @derivedFrom(field: "user")
     totalVotes: BigInt!   # how many tokens they've allocated to PLCR contract
     lockedVotes: BigInt!    # call getLockedTokens() after every commit or reveal or TokensRescued
@@ -82,7 +80,7 @@ type User @entity {
     signals: [Signal!]! @derivedFrom(field:"owner")                     # ERC-721
 }
 
-# TODO - how are these related to voting, and listings?
+# Signal does not interface with Registry, i.e. SignalToken.sol is independant of the other smart contracts
 type Signal @entity {
     id: ID!             # signal token ID
     owner: Bytes!

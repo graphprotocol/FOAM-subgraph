@@ -60,7 +60,7 @@ export function handleChallenge(event: _Challenge): void {
   listing.save()
 
   // chalennge gets created (event contains, plus call into
-  let challengeID = event.params.challengeID.toHex()
+  let challengeID = event.params.challengeID.toString()
   let challenge = new Challenge(challengeID)
   let registry = Registry.bind(event.address)
   let storageChallenge = registry.challenges(event.params.challengeID)
@@ -152,7 +152,7 @@ export function handleTouchAndRemoved(event: _TouchAndRemoved): void {
 }
 
 export function handleChallengeFailed(event: _ChallengeFailed): void {
-  let id = event.params.challengeID.toHex()
+  let id = event.params.challengeID.toString()
   let challenge = Challenge.load(id)
   challenge.resolved = true
   challenge.totalTokens = event.params.totalTokens
@@ -172,7 +172,7 @@ export function handleChallengeFailed(event: _ChallengeFailed): void {
 }
 
 export function handleChallengeSucceeded(event: _ChallengeSucceeded): void {
-  let id = event.params.challengeID.toHex()
+  let id = event.params.challengeID.toString()
   let challenge = Challenge.load(id)
   challenge.resolved = true
   challenge.totalTokens = event.params.totalTokens
@@ -183,7 +183,7 @@ export function handleChallengeSucceeded(event: _ChallengeSucceeded): void {
 
 // note - reward amounts owned by each user is stored in PLCR voting. only totals stored in Registry
 export function handleRewardClaimed(event: _RewardClaimed): void {
-  let id = event.params.challengeID.toHex()
+  let id = event.params.challengeID.toString()
   let challenge = Challenge.load(id)
 
   let registry = Registry.bind(event.address)

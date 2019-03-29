@@ -12,7 +12,7 @@ import {
 
 
 export function handleVoteCommitted(event: _VoteCommitted): void{
-  let pollID = event.params.pollID.toHex()
+  let pollID = event.params.pollID.toString()
   let poll = Poll.load(pollID)
   let commits = poll.didCommit
   commits.push(event.params.voter)
@@ -24,6 +24,7 @@ export function handleVoteCommitted(event: _VoteCommitted): void{
   let voteID = event.params.pollID.toString().concat('-').concat(event.params.voter.toHex())
   let vote = new Vote(voteID)
   vote.pollID = event.params.pollID
+  vote.user = event.params.voter
   vote.numTokens = event.params.numTokens
   vote.revealed = false
   vote.save()
@@ -37,7 +38,7 @@ export function handleVoteCommitted(event: _VoteCommitted): void{
 
 
 export function handleVoteRevealed(event: _VoteRevealed): void {
-  let pollID = event.params.pollID.toHex()
+  let pollID = event.params.pollID.toString()
   let poll = Poll.load(pollID)
   let reveals = poll.didReveal
   reveals.push(event.params.voter)
@@ -64,7 +65,7 @@ export function handleVoteRevealed(event: _VoteRevealed): void {
 }
 
 export function handlePollCreated(event: _PollCreated): void{
-  let id = event.params.pollID.toHex()
+  let id = event.params.pollID.toString()
   let poll = new Poll(id)
   poll.voteQuorum  = event.params.voteQuorum
   poll.commitEndDate = event.params.commitEndDate
