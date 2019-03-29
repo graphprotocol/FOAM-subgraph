@@ -1,9 +1,6 @@
-
 import {Transfer} from '../types/FOAMToken/FOAMToken'
-
 import {User} from '../types/schema'
 import {BigInt} from "@graphprotocol/graph-ts/index";
-
 
 export function handleTransfer(event: Transfer): void {
   let toID = event.params.to.toHex()
@@ -33,11 +30,9 @@ export function handleTransfer(event: Transfer): void {
   }
 }
 
-
-
-// We don't bother tracking approvals, because VotingRights represent this, and fail if approval does
-// not exist. Therefore the only approvals core to the protocol, are tracked in VotingRights, and thus
-// generalized approvals need not be tracked here
+// We don't bother tracking approvals, because VotingRights represent this, and
+// fail if approval does not exist. Therefore the only approvals core to the protocol
+// are tracked in VotingRights, and thus generalized approvals need not be tracked here
 
 // export function handleApproval(event: Approval): void {
 //

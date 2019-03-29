@@ -90,8 +90,8 @@ export function handleChallenge(event: _Challenge): void {
     user.totalVotes = BigInt.fromI32(0)
     user.lockedVotes = BigInt.fromI32(0)
     user.save()
-    // note - user doesn't stake or apply here, those have to do with listing. so it is okay
-    // the user is populated with 0 for everything
+    // note - user doesn't stake or apply here, those have to do with listing.
+    // so it is okay the user is populated with 0 for everything
   }
 }
 

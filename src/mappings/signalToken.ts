@@ -1,7 +1,5 @@
-
 import {Transfer, TrackedToken} from '../types/SignalToken/SignalToken'
-import {Signal, User} from '../types/schema'
-
+import {Signal} from '../types/schema'
 
 // Transfer handles all transfers, burns (to 0 addr), and mints (from 0 addr)
 export function handleTransfer(event: Transfer): void {

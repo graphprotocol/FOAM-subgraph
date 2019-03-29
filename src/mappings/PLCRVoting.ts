@@ -6,7 +6,8 @@ import {
   _PollCreated,
   _VotingRightsGranted,
   _VotingRightsWithdrawn,
-  _TokensRescued
+  _TokensRescued,
+  PLCRVoting
 } from '../types/PLCRVoting/PLCRVoting'
 
 
@@ -24,11 +25,18 @@ export function handleVoteCommitted(event: _VoteCommitted): void{
   let vote = new Vote(voteID)
   vote.pollID = event.params.pollID
   vote.numTokens = event.params.numTokens
+  vote.revealed = false
   vote.save()
+
+  let user = User.load(event.params.voter.toHex())
+  let voting = PLCRVoting.bind(event.address)
+  let lockedVotes= voting.getLockedTokens(event.params.voter)
+  user.lockedVotes = lockedVotes
+  user.save()
 }
 
 
-export function handleVoteRevealed(event: _VoteRevealed): void{
+export function handleVoteRevealed(event: _VoteRevealed): void {
   let pollID = event.params.pollID.toHex()
   let poll = Poll.load(pollID)
   let reveals = poll.didReveal
@@ -45,7 +53,14 @@ export function handleVoteRevealed(event: _VoteRevealed): void{
   } else {
     vote.votedFor = false
   }
+  vote.revealed = true
   vote.save()
+
+  let user = User.load(event.params.voter.toHex())
+  let voting = PLCRVoting.bind(event.address)
+  let lockedVotes= voting.getLockedTokens(event.params.voter)
+  user.lockedVotes = lockedVotes
+  user.save()
 }
 
 export function handlePollCreated(event: _PollCreated): void{
@@ -82,8 +97,9 @@ export function handleVotingRightsWithdrawn(event: _VotingRightsWithdrawn): void
 
 
 export function handleTokensRescued(event: _TokensRescued): void{
-
-  // TODO - need to understand how the DLL and store works, and then I can record LOCKED tokens for users
-
-
+  let user = User.load(event.params.voter.toHex())
+  let voting = PLCRVoting.bind(event.address)
+  let lockedVotes= voting.getLockedTokens(event.params.voter)
+  user.lockedVotes = lockedVotes
+  user.save()
 }

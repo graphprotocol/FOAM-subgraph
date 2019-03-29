@@ -13,16 +13,19 @@ type Poll @entity {
     votes: [Vote!]! @derivedFrom(field: "pollID")
     totalTokens: BigInt!
     challenge: Challenge!                           # 1to1 relationship with the challenge, they share IDs
-
-    # TODO - add dllMap?
 }
 
+# Votes represent the DLL and the attribute store.
+# To get locked tokens, everytime a vote is commited, or revealed, or tokens
+# are rescued on those event triggers the subgraph must call getLockedTokens().
+# This is  in @entity User
 type Vote @entity {
     id: ID!                             # concatenation of POLLID-ETHADDRESS
     pollID: BigInt!                     # for relational connections
     user: Bytes!                        # for relational connections
     numTokens: BigInt!
     votedFor: Boolean                   # true means voted for, false agaisnt, null unknown
+    revealed: Boolean!                  # commited = false. revealed = true. revealed means it is no longer influencing locked tokens, and has been removed from DLL
 }
 
 # Registry.sol
@@ -37,7 +40,7 @@ type Listing @entity {
     deleted: Boolean!                   # when true, listing has been deleted from the smart contract
     challenges: [Challenge!]! @derivedFrom(field:"listing") # array of all challenges. Active is challenge.resolved = false
 
-    # TODO - relate challenges, prob an array , related to the listingID
+    # TODO - ensure all entity relationships are working
 }
 
 # is this a duplicate entity? or do two types of challenges exist?
@@ -61,8 +64,8 @@ type User @entity {
     id: ID!                                                             # eth address
 
     # Registry.sol
-    numApplications: BigInt!    # also stored as mapping public var. Smart contract only counts increases
-    totalStaked: BigInt!        # also stored as mapping public var. Smart contract only counts increases
+    numApplications: BigInt!    # also stored as mapping public var. Smart contract only counts increases. Related to the Proof of use contract (POU)
+    totalStaked: BigInt!        # also stored as mapping public var. Smart contract only counts increases. Related to the Proof of use contract (POU)
     listings: [Listing!]! @derivedFrom(field: "owner")
     challenges: [Challenge!]! @derivedFrom(field: "challenger")
 
@@ -70,7 +73,7 @@ type User @entity {
     createdPolls: [Poll!]! @derivedFrom(field: "creator")
     votes: [Vote!]! @derivedFrom(field: "user")
     totalVotes: BigInt!   # how many tokens they've allocated to PLCR contract
-    lockedVotes: BigInt!
+    lockedVotes: BigInt!    # call getLockedTokens() after every commit or reveal or TokensRescued
 
     # Token.sol (FOAM Token)
     foamBalance: BigInt!
