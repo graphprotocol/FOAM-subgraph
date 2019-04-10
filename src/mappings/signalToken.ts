@@ -5,6 +5,9 @@ import {Signal} from '../types/schema'
 export function handleTransfer(event: Transfer): void {
   let id = event.params._tokenId.toHex()
   let signal = Signal.load(id)
+  if (signal == null){
+    signal = new Signal(id)
+  }
   signal.owner = event.params._to
   signal.save()
 }
